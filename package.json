@@ -1,0 +1,99 @@
+{
+	"name": "code-debuger",
+	"displayName": "code-debuger",
+	"description": "%description%",
+	"version": "0.0.1",
+	"publisher": "wowbox",
+	"main": "./dist/extension.js",
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "npm run clear && tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.52.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"keywords": [
+		"code",
+		"debug",
+		"conderunner",
+		"debuger",
+		"node",
+		"js",
+		"ts",
+		"javascript",
+		"typescript",
+		"python"
+	],
+	"activationEvents": [
+    "*"
+	],
+	"contributes": {
+		"commands": [
+			{
+				"command": "code-debuger.debugFile",
+        "title": "%debug file%",
+        "icon": {
+          "light": "./res/debug-light.svg",
+          "dark": "./res/debug-dark.svg"
+        }
+			}
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == javascript || resourceLangId == typescript || resourceLangId == python",
+          "command": "code-debuger.debugFile",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceLangId == javascript || resourceLangId == typescript || resourceLangId == python",
+          "command": "code-debuger.debugFile",
+          "group": "navigation"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "when": "resourceLangId == javascript || resourceLangId == typescript || resourceLangId == python",
+          "command": "code-debuger.debugFile",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "resourceLangId == javascript || resourceLangId == typescript || resourceLangId == python",
+          "command": "code-debuger.debugFile",
+          "group": "navigation"
+        }
+      ]
+    }
+	},
+	"devDependencies": {
+		"@types/fs-extra": "^9.0.6",
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.4",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.52.0",
+		"@typescript-eslint/eslint-plugin": "^4.9.0",
+		"@typescript-eslint/parser": "^4.9.0",
+		"eslint": "^7.15.0",
+		"glob": "^7.1.6",
+		"mocha": "^8.1.3",
+		"mora-scripts": "^1.7.4",
+		"typescript": "^4.1.2",
+		"vscode-test": "^1.4.1"
+	},
+	"dependencies": {
+		"fs-extra": "^9.1.0",
+		"tslib": "^2.1.0"
+	}
+}

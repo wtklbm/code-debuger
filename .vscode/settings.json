@@ -1,0 +1,21 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "editor.detectIndentation": false,
+  "files.exclude": {
+    "dist": true,
+    "node_modules": true,
+    ".editorconfig": true,
+    ".eslintignore": true,
+    "LICENSE": true,
+    ".eslintrc.json": true,
+    ".gitignore": true,
+    ".vscodeignore": true,
+    "package-lock.json": true,
+  },
+  "search.exclude": {
+    "dist": true,
+    "node_modules": true,
+  },
+  // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
+  "typescript.tsc.autoDetect": "off"
+}

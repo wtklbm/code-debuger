@@ -1,8 +1,8 @@
 {
   "name": "code-debuger",
-  "displayName": "code-debuger",
+  "displayName": "code debuger",
   "description": "%description%",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "wowbox",
   "main": "./dist/extension.js",
   "scripts": {

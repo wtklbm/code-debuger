@@ -8,6 +8,7 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "npm run clear && tsc -p ./",
+    "clear": "remove-all dist",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
@@ -92,6 +93,7 @@
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
     "eslint": "^7.15.0",
+    "mora-scripts": "^1.7.4",
     "typescript": "^4.1.2"
   },
   "dependencies": {

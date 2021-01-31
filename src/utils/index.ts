@@ -1,5 +1,8 @@
+import * as fs from 'fs-extra';
+
 export * from './locale';
 export * from './api'
+export * from './node'
 
 /**
  * Format the template with specified values.
@@ -19,5 +22,17 @@ export function format(template: string, ...values: any[]) {
   return values.reduce((prev, value, index) => {
       return prev.replace(new RegExp(`\\{${index}\\}`, "gm"), value);
   }, template);
+}
+
+export function isFile(filePath: string) {
+  return fs.existsSync(filePath) && fs.statSync(filePath).isFile();
+}
+
+export function isDir(dir: string) {
+  return fs.existsSync(dir) && fs.statSync(dir).isDirectory();
+}
+
+export function delay ( ms: number ) {
+  return new Promise ( resolve => setTimeout ( resolve, ms ) );
 }
 

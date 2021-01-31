@@ -7,7 +7,7 @@ export function activate(context: vscode.ExtensionContext) {
   setup(context.extensionPath);
 
   // 注册命令
-	initCommand(context);
+  initCommand(context);
 }
 
 export function deactivate() {}

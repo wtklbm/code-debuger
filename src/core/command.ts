@@ -1,4 +1,5 @@
-import { ExtensionContext, Uri, window } from "vscode";
+import { ExtensionContext, Uri, debug, commands, workspace } from "vscode";
+import { getProvider } from "../configs";
 import { registerCommand } from "../utils";
 
 
@@ -6,12 +7,19 @@ export function initCommand(context: ExtensionContext) {
   registerCommand(context, "code-debuger.debugFile", debugFile);
 }
 
-function debugFile(uri: Uri) {
+async function debugFile(uri: Uri, ...args: any[]) {
   console.log("debug file: ", JSON.stringify(uri))
 
-  // let filePath = window.activeTextEditor?.document.uri.fsPath;
+  let workspaceFolder = workspace.getWorkspaceFolder(uri);
+  let cwd = workspaceFolder?.uri.fsPath ?? "";
+
   if (uri.scheme === "file") {
-    window.showInformationMessage(uri.fsPath);  
+    let provider = await getProvider(uri, cwd);
+    if (!provider) return;
+
+    debug.startDebugging(undefined, provider);
+    commands.executeCommand ( 'workbench.debug.action.focusRepl' );
   }
 }
+
 

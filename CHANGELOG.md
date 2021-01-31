@@ -1,9 +1,4 @@
-# Change Log
+# 更新日志
 
-All notable changes to the "code-debuger" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+### v0.0.1 2021-01-31
+- 第一个版本（js、ts、py、go、coffee）

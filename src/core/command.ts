@@ -7,7 +7,7 @@ export function initCommand(context: ExtensionContext) {
   registerCommand(context, "code-debuger.debugFile", debugFile);
 }
 
-async function debugFile(uri: Uri, ...args: any[]) {
+async function debugFile(uri: Uri) {
   console.log("debug file: ", JSON.stringify(uri))
 
   let workspaceFolder = workspace.getWorkspaceFolder(uri);

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { getProvider, getSuportLanguages } from "../configs";
-import { clearSpinner, EXEC_ERROR, getFileNoExtension, getWorkspaceFolder, isDir, isFile, registerCommand, showSpinner, tryExecCmdSync } from "../utils";
+import { clearSpinner, EXEC_ERROR, getFileNoExtension, getWorkspaceFolder, isDir, isFile, registerCommand, showReloadBox, showSpinner, tryExecCmdSync } from "../utils";
 import * as fs from 'fs-extra';
 import { Extension } from "./extension";
 import { localize } from "../i18n";
@@ -20,7 +20,11 @@ async function debugFile(uri: vscode.Uri) {
 
     // 扩展
     if (provider.extensions) {
-      await Extension.instance.checkToInstall(provider.extensions);
+      const hasUninstalled = await Extension.instance.checkToInstall(provider.extensions);
+      if (hasUninstalled) {
+        showReloadBox();
+        return;
+      }
     }
 
     // 编译命令

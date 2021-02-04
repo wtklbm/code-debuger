@@ -9,10 +9,11 @@ import { CaseInsensitiveMap } from "../collections";
 import { localize } from "../i18n";
 
 import { IExtension, IExtensionMeta, QueryFilterType, QueryFlag } from "../types";
-import { clearSpinner, getExtensionById, showReloadBox, showSpinner } from "../utils";
+import { clearSpinner, getExtensionById, showSpinner } from "../utils";
 import { downloadFile } from "../utils/download";
 import { Environment } from "./environment";
 
+tmp.setGracefulCleanup();
 
 export class Extension {
   private static _instance: Extension;
@@ -39,7 +40,7 @@ export class Extension {
    * 检查并安装扩展
    * @param ids 
    */
-  public async checkToInstall(ids: string[]) {
+  public async checkToInstall(ids: string[]): Promise<boolean> {
     let uids = this.getUninstalled(ids);
 
     if (uids.length) {
@@ -60,10 +61,10 @@ export class Extension {
 
       await this.installExtensions(extensions);
 
-      vscode.window.showInformationMessage("");
-
-      showReloadBox();
+      return true;
     }
+
+    return false;
   }
 
   private getUninstalled(ids: string[]): string[] {
@@ -74,7 +75,7 @@ export class Extension {
       if (!exts.find(ext => id.toLowerCase() === ext.id.toLowerCase())) {
         return id;
       }
-    })
+    }).filter(item => !!item)
     
     return result;
   }

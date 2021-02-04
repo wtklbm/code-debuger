@@ -2,7 +2,10 @@ import { execSync } from "child_process";
 import * as readPkgUp from 'read-pkg-up';
 import * as path from 'path';
 import * as fs from "fs-extra";
+import { clearSpinner, showSpinner } from "./api";
+import { localize } from "../i18n";
 
+export const EXEC_ERROR = "@@ERROR@@";
 
 export function findMoudlePath(fspath: string, mod: string) {
   const root = getNpmGlobalRoot();
@@ -17,7 +20,9 @@ export function findMoudlePath(fspath: string, mod: string) {
     return modPath;
   }
 
-  tryExecCmdSync('npm i -g ts-node', '');
+  showSpinner(localize('toast.spinner.installing.nodemodule', mod));
+  tryExecCmdSync(`npm i -g ${mod}`);
+  clearSpinner();
   if (fs.existsSync(path.join(root, mod))) {
     return path.join(root, mod);
   }
@@ -32,9 +37,9 @@ function getNpmGlobalRoot() {
   return tryExecCmdSync('npm root -g', '').trim();
 }
 
-function tryExecCmdSync(cmd: string, fallback: string): string
-function tryExecCmdSync(cmd: string, fallback?: string): undefined | string {
+export function tryExecCmdSync(cmd: string, fallback: string = EXEC_ERROR): string {
   try {
+    // let options = process.platform === 'darwin' ? {shell: '/bin/bash'} : undefined;
     return execSync(cmd).toString()
   } catch (e) {
     return fallback

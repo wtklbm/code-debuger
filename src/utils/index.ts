@@ -1,8 +1,9 @@
-import * as fs from 'fs-extra';
+import * as fs from 'fs-extra'
 
-export * from './locale';
+export * from './locale'
 export * from './api'
 export * from './node'
+export * from './placeholder'
 
 /**
  * Format the template with specified values.
@@ -34,5 +35,17 @@ export function isDir(dir: string) {
 
 export function delay ( ms: number ) {
   return new Promise ( resolve => setTimeout ( resolve, ms ) );
+}
+
+export function isPlainObject(val: any): boolean {
+  return Object.prototype.toString.call(val) === '[object Object]';
+}
+
+export function isString(val: any): val is string {
+  return typeof val === 'string' || val instanceof String;
+}
+
+export function isFunction(val: any): val is Function {
+  return typeof val === 'function';
 }
 

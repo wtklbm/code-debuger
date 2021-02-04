@@ -1,4 +1,18 @@
 {
-  "description": "让 debug js、ts、python 脚本文件更简单",
-  "debug file": "debug file"
+  "description": "debug JS, TS, Python, Go, Dart, C/CPP, Rust, CoffeeScript",
+  "debug file": "debug file",
+  "toast.box.reload": "重新加载窗口",
+  "toast.box.reload.message": "配置已成功同步，请重新加载 VSCode 以让配置生效。",
+  "toast.settings.downloading.extension": "正在下载扩展: {0}",
+  "toast.settings.installing.extension": "正在安装扩展: {0}",
+  "toast.spinner.runing": "正在执行: {0}",
+  "toast.spinner.installing.nodemodule": "安装: {0}",
+  "error.command": "命令错误: \n{0}",
+  "error.no.ts-node": "调试 typescript 需要 ts-node",
+  "error.extract.extension-1": "无法解压缩扩展: {0}。{1}",
+  "error.extract.extension-2": "无法解压缩扩展: {0}。访问系统临时目录时被拒绝，请检查您的用户权限",
+  "error.extract.extension-3": "无法解压缩扩展: {0}。未找到安装扩展所需的压缩文件",
+  "error.uninstall.extension": "无法卸载扩展: {0}",
+  "error.env.platform.not.supported": "暂时还不支持您的操作系统",
+  "error.env.unknown.vscode": "无法识别当前 VSCode 版本"
 }

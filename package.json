@@ -1,8 +1,8 @@
 {
   "name": "code-debuger",
-  "displayName": "code debuger",
+  "displayName": "Code Debuger",
   "description": "%description%",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "wowbox",
   "main": "./dist/extension.js",
   "scripts": {
@@ -27,19 +27,30 @@
   },
   "categories": [
     "Other",
-    "Programming Languages"
+    "Programming Languages",
+    "Debuggers"
   ],
   "keywords": [
     "code",
     "debug",
-    "conderunner",
+    "runner",
+    "code runner",
+    "coderunner",
     "debuger",
     "node",
     "js",
     "ts",
+    "vue",
     "javascript",
     "typescript",
-    "python"
+    "python",
+    "dart",
+    "go",
+    "c",
+    "cpp",
+    "c++",
+    "rust",
+    "小程序"
   ],
   "activationEvents": [
     "*"
@@ -58,28 +69,28 @@
     "menus": {
       "editor/title": [
         {
-          "when": "resourceLangId == javascript || resourceLangId == typescript || resourceLangId == python || resourceLangId == dart || resourceLangId == go || resourceLangId == coffeescript",
+          "when": "resourceLangId in code-debuger:languages",
           "command": "code-debuger.debugFile",
           "group": "navigation"
         }
       ],
       "editor/context": [
         {
-          "when": "resourceLangId == javascript || resourceLangId == typescript || resourceLangId == python || resourceLangId == dart || resourceLangId == go || resourceLangId == coffeescript",
+          "when": "resourceLangId in code-debuger:languages",
           "command": "code-debuger.debugFile",
           "group": "navigation"
         }
       ],
       "editor/title/context": [
         {
-          "when": "resourceLangId == javascript || resourceLangId == typescript || resourceLangId == python || resourceLangId == dart || resourceLangId == go || resourceLangId == coffeescript || resourceLangId == swift",
+          "when": "resourceLangId in code-debuger:languages",
           "command": "code-debuger.debugFile",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "when": "resourceLangId == javascript || resourceLangId == typescript || resourceLangId == python || resourceLangId === dart || resourceLangId === go || resourceLangId == coffeescript || resourceLangId == swift",
+          "when": "resourceLangId in code-debuger:languages",
           "command": "code-debuger.debugFile",
           "group": "navigation"
         }
@@ -87,8 +98,12 @@
     }
   },
   "devDependencies": {
+    "@types/extract-zip": "^1.6.2",
     "@types/fs-extra": "^9.0.6",
+    "@types/micromatch": "^4.0.1",
     "@types/node": "^12.11.7",
+    "@types/node-fetch": "^2.5.8",
+    "@types/tmp": "^0.2.0",
     "@types/vscode": "^1.52.0",
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
@@ -97,8 +112,12 @@
     "typescript": "^4.1.2"
   },
   "dependencies": {
+    "extract-zip": "^2.0.1",
     "fs-extra": "^9.1.0",
+    "micromatch": "^4.0.2",
+    "node-fetch": "^2.6.1",
     "read-pkg-up": "^7.0.1",
+    "tmp": "^0.2.1",
     "tslib": "^2.1.0"
   }
 }

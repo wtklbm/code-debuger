@@ -14,4 +14,4 @@ code runner 是run代码，code debuger 是调试代码，也就是你可以下�
 
 ### 注意事项
 1、Code Debuger 会自动安装语言debug必须的Vscode扩展，可能需要reload window。
-2、语言的开发环境需要先配置好。
+2、语言的开发环境需要先配置好（例如：go 需要dlv）。

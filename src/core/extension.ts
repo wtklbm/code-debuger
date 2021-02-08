@@ -9,9 +9,10 @@ import { CaseInsensitiveMap } from "../collections";
 import { localize } from "../i18n";
 
 import { IExtension, IExtensionMeta, QueryFilterType, QueryFlag } from "../types";
-import { clearSpinner, getExtensionById, showSpinner } from "../utils";
+import { clearSpinner, getExtensionById, showReloadBox, showSpinner } from "../utils";
 import { downloadFile } from "../utils/download";
 import { Environment } from "./environment";
+import { ExtensionStorage } from "./storage";
 
 tmp.setGracefulCleanup();
 
@@ -19,9 +20,11 @@ export class Extension {
   private static _instance: Extension;
 
   private _env: Environment;
+  private _storage: ExtensionStorage;
 
   private constructor() {
     this._env = Environment.create();
+    this._storage = ExtensionStorage.create();
   }
 
   public static create(): Extension {
@@ -60,6 +63,13 @@ export class Extension {
       })
 
       await this.installExtensions(extensions);
+
+      let disabled = this._storage.getDisabledExtension(uids).map(id => `${queriedExtensions.get(id)?.displayName}`);
+      if (disabled.length) {
+        showReloadBox(localize('toast.box.enable.extension', disabled.join(',')));
+      } else {
+        showReloadBox();
+      }
 
       return true;
     }

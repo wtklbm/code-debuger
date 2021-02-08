@@ -3,6 +3,7 @@
   "debug file": "debug file",
   "toast.box.reload": "Reload Now",
   "toast.box.reload.message": "Extensions are successfully installed. Please reload VSCode to take effect.",
+  "toast.box.enable.extension": "Please enable Vscode extensions: {0}",
   "toast.settings.downloading.extension": "Downloading extension: {0}",
   "toast.settings.installing.extension": "Installing extension: {0}",
   "toast.spinner.installing.nodemodule": "Installing: {0}",

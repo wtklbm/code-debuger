@@ -33,6 +33,11 @@ export interface IExtension {
   downloadURL?: string;
 }
 
+export interface IDisableExtension {
+  id: string;
+  uuid: string;
+}
+
 export interface IExtensionMeta {
   categories: string[];
   displayName: string;

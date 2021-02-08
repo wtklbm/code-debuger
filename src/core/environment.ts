@@ -12,6 +12,9 @@ export class Environment {
   public readonly isWin: boolean;
   public readonly isPortable: boolean;
   public readonly platform: Platform;
+  public readonly dataDirectory: string;
+  public readonly userDirectory: string;
+  public readonly globalStorageFilePath: string;
   public readonly extensionsDirectory: string;
   public readonly obsoleteFilePath: string;
 
@@ -25,12 +28,15 @@ export class Environment {
     this.isPortable = (process.env.VSCODE_PORTABLE != null);
 
     this.extensionsDirectory = this._getExtensionsDirectory(this.isPortable);
+    this.dataDirectory = this._getDataDirectory(this.isPortable, this.platform);
+    this.userDirectory = path.join(this.dataDirectory, "User");
+    this.globalStorageFilePath = path.join(this.userDirectory, 'globalStorage', 'state.vscdb');
     this.obsoleteFilePath = path.join(this.extensionsDirectory, ".obsolete");
   }
 
   public static create(): Environment {
     if (!Environment._instance) {
-        Environment._instance = new Environment();
+      Environment._instance = new Environment();
     }
     return Environment._instance;
   }
@@ -65,15 +71,46 @@ export class Environment {
     );
   }
 
+  /**
+   * 获取vscode data文件夹
+   */
+  private _getDataDirectory(isPortable: boolean, platform: Platform): string {
+    if (isPortable) {
+      // Such as the "/Applications/code-portable-data/user-data" directory in MacOS.
+      return path.join(process.env.VSCODE_PORTABLE!, "user-data");
+    }
+    const { dataDirectoryName } = getVSCodeBuiltinEnvironment();
+    switch (platform) {
+      case Platform.WINDOWS:
+        return path.join(process.env.APPDATA!, dataDirectoryName);
+
+      case Platform.MACINTOSH:
+        return path.join(
+          os.homedir(),
+          "Library",
+          "Application Support",
+          dataDirectoryName
+        );
+
+      default:
+      case Platform.LINUX:
+        return path.join(
+          os.homedir(),
+          ".config",
+          dataDirectoryName
+        );
+    }
+  }
+
   private _getPlatform() {
     if (process.platform === "linux") {
-        return Platform.LINUX;
+      return Platform.LINUX;
     }
     if (process.platform === "darwin") {
-        return Platform.MACINTOSH;
+      return Platform.MACINTOSH;
     }
     if (process.platform === "win32") {
-        return Platform.WINDOWS;
+      return Platform.WINDOWS;
     }
     throw new Error(localize("error.env.platform.not.supported"));
   }

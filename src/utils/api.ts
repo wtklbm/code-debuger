@@ -25,9 +25,9 @@ export function showConfirmBox(message: string, ...buttons: string[]) {
 /**
  * Shows a `Reload VSCode` prompt dialog.
  */
-export function showReloadBox(): void {
+export function showReloadBox(msg?: string): void {
   const reloadButton = localize("toast.box.reload");
-  const message = localize("toast.box.reload.message");
+  const message = msg || localize("toast.box.reload.message");
   vscode.window.showInformationMessage(message, reloadButton).then((selection) => {
     if (selection === reloadButton) {
       reloadWindow();

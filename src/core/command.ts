@@ -22,7 +22,6 @@ async function debugFile(uri: vscode.Uri) {
     if (provider.extensions) {
       const hasUninstalled = await Extension.instance.checkToInstall(provider.extensions);
       if (hasUninstalled) {
-        showReloadBox();
         return;
       }
     }

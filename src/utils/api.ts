@@ -70,15 +70,13 @@ export function showSpinner(message: string, progress?: number, total?: number):
   }, spinner.interval);
 }
 
-export function clearSpinner(message?: string): void {
+export function clearSpinner(message: string = ''): void {
   if (spinnerTimer) {
     clearInterval(spinnerTimer);
     spinnerTimer = null;
-
-    if (message) {
-      vscode.window.setStatusBarMessage(message);
-    }
   }
+
+  vscode.window.setStatusBarMessage(message);
 }
 
 export function getExtensionById(id: string, ignoreCase = true) {

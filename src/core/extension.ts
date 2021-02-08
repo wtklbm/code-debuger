@@ -1,29 +1,20 @@
-import * as extractZip from "extract-zip";
-import * as fs from "fs-extra";
 import * as micromatch from "micromatch";
 import fetch from "node-fetch";
-import * as path from "path";
-import * as tmp from "tmp";
 import * as vscode from "vscode";
 import { CaseInsensitiveMap } from "../collections";
 import { localize } from "../i18n";
 
 import { IExtension, IExtensionMeta, QueryFilterType, QueryFlag } from "../types";
-import { clearSpinner, getExtensionById, showReloadBox, showSpinner } from "../utils";
-import { downloadFile } from "../utils/download";
-import { Environment } from "./environment";
+import { clearSpinner, showReloadBox, showSpinner } from "../utils";
 import { ExtensionStorage } from "./storage";
 
-tmp.setGracefulCleanup();
 
 export class Extension {
   private static _instance: Extension;
 
-  private _env: Environment;
   private _storage: ExtensionStorage;
 
   private constructor() {
-    this._env = Environment.create();
     this._storage = ExtensionStorage.create();
   }
 
@@ -48,24 +39,12 @@ export class Extension {
 
     if (uids.length) {
       let queriedExtensions = await this.queryExtensions(uids);
-      let extensions: IExtension[] = [];
 
-      queriedExtensions.forEach((ext, key) => {
-        let latestVersion = this.getLatestVSIXVersion(ext);
-        if (latestVersion) {
-          extensions.push({
-            id: key,
-            name: ext.extensionName.toLowerCase(),
-            publisher: ext.publisher.publisherName,
-            version: latestVersion
-          })
-        }
-      })
+      await this.installExtensions(uids);
 
-      await this.installExtensions(extensions);
-
-      let disabled = this._storage.getDisabledExtension(uids).map(id => `${queriedExtensions.get(id)?.displayName}`);
+      let disabled = this._storage.getDisabledExtension(uids).map(id => queriedExtensions.get(id)?.displayName || id);
       if (disabled.length) {
+        vscode.commands.executeCommand('workbench.extensions.action.showDisabledExtensions');
         showReloadBox(localize('toast.box.enable.extension', disabled.join(',')));
       } else {
         showReloadBox();
@@ -90,26 +69,21 @@ export class Extension {
     return result;
   }
 
-  private async installExtensions(extensions: IExtension[]) {
+  private async installExtensions(ids: string[]) {
     let steps = 0
-    let total = extensions.length;
+    let total = ids.length;
 
-    for (const item of extensions) {
+    for (const id of ids) {
       try {
         steps++;
-        showSpinner(localize("toast.settings.downloading.extension", item.id), steps, total);
-        const extension = await this.downloadExtension(item);
-        showSpinner(localize("toast.settings.installing.extension", item.id), steps, total);
-
-        await this.extractExtension(extension);
+        showSpinner(localize("toast.settings.installing.extension", id), steps, total);
+        await this.installExtension(id);
       } catch (error) {
-
+        console.log(error);
       }
     }
 
     clearSpinner();
-
-    await this.updateObsolete(extensions);
   }
 
   /**
@@ -137,106 +111,26 @@ export class Extension {
     return result.sort((a, b) => (a.id || "").localeCompare(b.id || ""));
   }
 
-  /**
-   * 从扩展市场下载扩展
-   */
-  private downloadExtension(extension: IExtension): Promise<IExtension> {
-    return new Promise((resolve, reject) => {
-      // Create a temporary file, the file will be automatically closed and unlinked on process exit.
-      tmp.file({ postfix: `.${extension.id}.zip` }, (err, filepath: string) => {
-        if (err) {
-          reject(err);
-          return;
-        }
 
-        // Calculates the VSIX download URL.
-        extension.downloadURL =
-          `https://${extension.publisher}.gallery.vsassets.io/_apis/public/gallery/`
-          + `publisher/${extension.publisher}/extension/${extension.name}/${extension.version}/`
-          + "assetbyname/Microsoft.VisualStudio.Services.VSIXPackage?install=true";
-
-        downloadFile(extension.downloadURL, filepath).then(() => {
-          resolve({ ...extension, vsixFilepath: filepath });
-        }).catch(reject);
-      });
-    });
-  }
-
-  /**
-   * Extracts (install) extension vsix package.
-   */
-  private extractExtension(extension: IExtension): Promise<IExtension> {
-    return new Promise((resolve, reject) => {
-      const { vsixFilepath } = extension;
-      if (vsixFilepath) {
-        tmp.dir({ postfix: `.${extension.id}`, unsafeCleanup: true }, (err1, dirPath: string) => {
-          if (err1) {
-            reject(localize("error.extract.extension-2", extension.id));
-          } else {
-            extractZip(vsixFilepath, { dir: dirPath}).then(() => {
-              const extPath = this._env.getExtensionDirectory(extension);
-                fs.emptyDir(extPath)
-                  .then(() => {
-                    return fs.copy(path.join(dirPath, "extension"), extPath);
-                  })
-                  .then(() => {
-                    resolve(extension);
-                  })
-                  .catch((err2) => {
-                    reject(localize("error.extract.extension-1", extension.id, err2.message));
-                  });
-            }).catch(err3 => {
-              reject(localize("error.extract.extension-1", extension.id, err3.message));
-            })
-          }
-        });
-      } else {
-        reject(localize("error.extract.extension-3", extension.id));
-      }
-    });
+  private async installExtension(id: string) {
+    try {
+      await vscode.commands.executeCommand('workbench.extensions.installExtension', id);
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   /**
    * 卸载扩展
    */
   // @ts-ignore
-  private async uninstallExtension(extension: IExtension): Promise<IExtension> {
-    const localExtension = getExtensionById(extension.id);
-    const extensionPath = localExtension
-      ? localExtension.extensionPath
-      : this._env.getExtensionDirectory(extension);
+  private async uninstallExtension(id: string) {
     try {
-      await fs.remove(extensionPath);
-    } catch (err) {
-      throw new Error(localize("error.uninstall.extension", extension.id));
-    }
-    return extension;
-  }
-
-  /**
-   * Updates the VSCode `.obsolete` file.
-   */
-  private async updateObsolete(added: IExtension[] = []): Promise<void> {
-    const filepath = this._env.obsoleteFilePath;
-    let obsolete: { [extensionFolderName: string]: boolean } | undefined;
-    try {
-      obsolete = await fs.readJson(filepath);
-    } catch (err) {
-    }
-
-    if (obsolete) {
-      for (const ext of added) {
-        delete obsolete[this._env.getExtensionDirectoryName(ext)];
-      }
-
-      try {
-        if (Object.keys(obsolete).length > 0) {
-          await fs.outputJson(filepath, obsolete);
-        } else {
-          await fs.remove(filepath);
-        }
-      } catch (err) {
-      }
+      await vscode.commands.executeCommand('workbench.extensions.uninstallExtension', id);
+      return true;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
@@ -291,15 +185,5 @@ export class Extension {
       }
     }
     return result;
-  }
-
-  /**
-   * 获取最新版本的扩展文件（VSIX file）
-   *
-   * @param {IExtensionMeta} extensionMeta The extension's meta object.
-   */
-  private getLatestVSIXVersion(extensionMeta: IExtensionMeta): string | undefined {
-    const versionMeta = extensionMeta.versions[0];
-    return versionMeta ? versionMeta.version : undefined;
   }
 }

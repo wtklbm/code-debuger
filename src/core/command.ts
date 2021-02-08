@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { getProvider, getSuportLanguages } from "../configs";
-import { clearSpinner, EXEC_ERROR, getFileNoExtension, getWorkspaceFolder, isDir, isFile, registerCommand, showReloadBox, showSpinner, tryExecCmdSync } from "../utils";
+import { clearSpinner, EXEC_ERROR, getFileNoExtension, getWorkspaceFolder, isDir, isFile, registerCommand, showSpinner, tryExecCmdSync } from "../utils";
 import * as fs from 'fs-extra';
 import { Extension } from "./extension";
 import { localize } from "../i18n";

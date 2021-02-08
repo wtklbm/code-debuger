@@ -32,8 +32,7 @@ export function getNormalizedVSCodeLocale(): NormalizedLocale {
 export function getVSCodeLocale(): string | undefined {
   try {
       return JSON.parse(process.env.VSCODE_NLS_CONFIG || "{}").locale;
-  }
-  catch (err) {
+  } catch (err) {
       return;
   }
 }

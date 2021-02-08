@@ -1,7 +1,5 @@
 import * as vscode from 'vscode';
 import { localize } from '../i18n';
-import { VSCODE_BUILTIN_ENVIRONMENTS } from '../constants';
-import { VSCodeEdition } from '../types';
 
 /**
  * Register extension command on VSCode.
@@ -77,53 +75,6 @@ export function clearSpinner(message: string = ''): void {
   }
 
   vscode.window.setStatusBarMessage(message);
-}
-
-export function getExtensionById(id: string, ignoreCase = true) {
-  if (id != null) {
-      if (ignoreCase) {
-          const targetId = id.toLocaleLowerCase();
-          return vscode.extensions.all.find((ext) => (ext.id.toLocaleLowerCase() === targetId));
-      }
-      return vscode.extensions.getExtension(id);
-  }
-  return;
-}
-
-/**
- * Gets the builtin-environment of the current running VSCode.
- *
- * @throws {Error} Throws an error when the environment is not found.
- */
-export function getVSCodeBuiltinEnvironment() {
-  return VSCODE_BUILTIN_ENVIRONMENTS[getVSCodeEdition()];
-}
-
-/**
- * Gets the edition of the current running VSCode.
- *
- * @throws {Error} Throws an error when the edition is unknown.
- */
-export function getVSCodeEdition() {
-  switch (vscode.env.appName) {
-      case "Visual Studio Code":
-          return VSCodeEdition.STANDARD;
-
-      case "Visual Studio Code - Insiders":
-          return VSCodeEdition.INSIDERS;
-
-      case "Visual Studio Code - Exploration":
-          return VSCodeEdition.EXPLORATION;
-
-      case "VSCodium":
-          return VSCodeEdition.VSCODIUM;
-
-      case "Code - OSS":
-          return VSCodeEdition.OSS;
-
-      default:
-          throw new Error(localize("error.env.unknown.vscode"));
-  }
 }
 
 /**

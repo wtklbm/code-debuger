@@ -1,10 +1,6 @@
 import { DebugConfiguration } from "vscode";
 
-export * from './extension'
 export * from './normalizedLocale'
-export * from './platform'
-export * from './edition'
-
 
 export declare type AnyObject = Record<string, any>;
 

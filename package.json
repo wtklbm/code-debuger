@@ -2,7 +2,7 @@
   "name": "code-debuger",
   "displayName": "Code Debugger",
   "description": "%description%",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "publisher": "wowbox",
   "main": "./dist/extension.js",
   "scripts": {
@@ -46,6 +46,7 @@
     "python",
     "dart",
     "go",
+    "bash",
     "c",
     "cpp",
     "c++",

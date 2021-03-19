@@ -4,7 +4,7 @@
 
 无需配置launch.json即可进行单文件调试，点击右上角虫子图标或者右键菜单都可以。
 
-支持**JS、TS、Python、Dart、Coffeescript、Go、C/C++、Rust**。
+支持**JS、TS、Python、Dart、Coffeescript、Go、C/C++、Rust、Bash、Lua**。
 
       
 ![demo](https://gitee.com/genqing/code-debuger/raw/master/res/demo.png)
@@ -14,3 +14,4 @@
 ## 注意事项
 1. Code Debugger 会自动安装语言debug必须的Vscode扩展，可能需要reload window。
 2. 语言的开发环境需要先配置好（例如：go 需要dlv）。
+3. Bash需要4.0以上版本，mac系统升级Bash请自行百度或者Google。

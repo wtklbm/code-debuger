@@ -89,6 +89,24 @@ const Providers: Record<string, Provider> = {
       "vadimcn.vscode-lldb",
       "rust-lang.rust"
     ]
+  },
+  "shellscript": {
+    configuration: {
+      name: "Bash",
+      type: "bashdb",
+    },
+    extensions: [
+      "rogalmic.bash-debug"
+    ]
+  },
+  "lua": {
+    configuration: {
+      name: "Lua",
+      type: "lrdb",
+    },
+    extensions: [
+      "satoren.lrdb"
+    ]
   }
 }
 

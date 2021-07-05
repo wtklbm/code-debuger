@@ -6,6 +6,18 @@ Debug code file for mutiple languages: **JS、TS、Python、Dart、Coffeescript�
 
 [submit issues](https://gitee.com/genqing/code-debuger/issues)
 
+## Q&A
+### 1、TypeScript cannot be debugged
+The reason is that node does not support `import`, just change "module" to "commonjs". 
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    ...
+  }
+}
+```
 
 ## Note
 1. Code Debugger will automatically install Vscode extensions necessary for language debug, and reload window may be required. 

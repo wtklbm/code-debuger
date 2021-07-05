@@ -11,6 +11,19 @@
 
 如果需要其他语言的，欢迎[提需求](https://gitee.com/genqing/code-debuger/issues)
 
+## 常见问题
+### 1、TypeScript 无法调试
+原因是node不支持import引入，将"module"改为"commonjs"即可。
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    ...
+  }
+}
+```
+
 ## 注意事项
 1. Code Debugger 会自动安装语言debug必须的Vscode扩展，可能需要reload window。
 2. 语言的开发环境需要先配置好（例如：go 需要dlv）。

@@ -1,6 +1,6 @@
 {
   "description": "Debug JS, TS, Python, Go, Dart, C/CPP, Rust, CoffeeScript, Lua",
-  "debug file": "debug file",
+  "debug file": "Debug file",
   "toast.box.reload": "重新加载窗口",
   "toast.box.reload.message": "扩展已安装成功，请重新加载。",
   "toast.box.enable.extension": "请在扩展中启用以下扩展: {0}。然后重新加载窗口",

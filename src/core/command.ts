@@ -14,6 +14,15 @@ export function initCommand(context: vscode.ExtensionContext) {
 async function debugFile(uri: vscode.Uri) {
   console.log("debug file: ", JSON.stringify(uri))
 
+  // 快捷键调用时，uri未定义
+  if (!uri) {
+    if (vscode.window.activeTextEditor) {
+      uri =  vscode.window.activeTextEditor.document.uri;
+    } else {
+      return;
+    }
+  }
+
   if (uri.scheme === "file") {
     let provider = await getProvider(uri);
     if (!provider) return;

@@ -1,6 +1,6 @@
 {
   "description": "Debug JS, TS, Python, Go, Dart, C/CPP, Rust, CoffeeScript, Lua",
-  "debug file": "debug file",
+  "debug file": "Debug file",
   "toast.box.reload": "Reload Now",
   "toast.box.reload.message": "Extensions are successfully installed. Please reload VSCode to take effect.",
   "toast.box.enable.extension": "Please enable Vscode extensions: {0}",

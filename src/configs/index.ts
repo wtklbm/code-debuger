@@ -87,7 +87,7 @@ const Providers: Record<string, Provider> = {
     ],
     extensions: [
       "vadimcn.vscode-lldb",
-      "rust-lang.rust"
+      "matklad.rust-analyzer"
     ]
   },
   "shellscript": {

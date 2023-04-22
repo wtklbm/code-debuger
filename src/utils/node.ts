@@ -39,8 +39,15 @@ function getNpmGlobalRoot() {
 
 export function tryExecCmdSync(cmd: string, fallback: string = EXEC_ERROR): string {
   try {
-    // let options = process.platform === 'darwin' ? {shell: '/bin/bash'} : undefined;
-    return execSync(cmd).toString()
+    let options
+    if (process.platform === 'darwin' || process.platform === 'linux') {
+      let shell = execSync('echo $SHELL').toString()
+      shell = String(shell).replace(/\n/, '')
+      options = { 
+        shell 
+      }
+    }
+    return execSync(cmd, options).toString()
   } catch (e) {
     return fallback
   }

@@ -1,3 +1,7 @@
+### v0.1.3 2023-12-25
+
+- 修正rust-analyzer的扩展ID. 感谢[@yeluyang](https://gitee.com/yeluyang95)
+
 ### v0.1.1 2021-08-18
 
 - Rust改为rust-analyzer扩展. 感谢 [@NightGlow98](https://gitee.com/nightglow98) [@Amin](https://gitee.com/what_time_457323897)

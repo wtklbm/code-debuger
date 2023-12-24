@@ -4,6 +4,7 @@ import { clearSpinner, EXEC_ERROR, getFileNoExtension, getWorkspaceFolder, isDir
 import * as fs from 'fs-extra';
 import { Extension } from "./extension";
 import { localize } from "../i18n";
+import * as path from "path";
 
 export function initCommand(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand('setContext', 'code-debuger:languages', getSuportLanguages());
@@ -12,8 +13,6 @@ export function initCommand(context: vscode.ExtensionContext) {
 }
 
 async function debugFile(uri: vscode.Uri) {
-  console.log("debug file: ", JSON.stringify(uri))
-
   // 快捷键调用时，uri未定义
   if (!uri) {
     if (vscode.window.activeTextEditor) {
@@ -61,11 +60,13 @@ async function debugFile(uri: vscode.Uri) {
       return vscode.commands.executeCommand(provider.configuration.command);
     }
 
-
     // @ts-ignore
     vscode.debug.startDebugging(undefined, provider.configuration);
     vscode.debug.onDidTerminateDebugSession(e => {
-      if (e.configuration.type === provider?.configuration.type ||
+      if (e.configuration.name === 'Rust') {
+        fs.emptyDirSync(path.join(e.configuration.cwd, '.debug'))
+        fs.removeSync(path.join(e.configuration.cwd, '.debug'))
+      } else if (e.configuration.type === provider?.configuration.type ||
         e.configuration.type === 'lldb' ||
         e.configuration.name === provider?.configuration.name ||
         e.configuration.program === provider?.configuration.program) {

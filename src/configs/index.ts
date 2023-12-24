@@ -80,14 +80,15 @@ const Providers: Record<string, Provider> = {
     configuration: {
       name: "Rust",
       type: "lldb",
-      program: '${fileNoExtension}',
+      program: path.join('${workspaceFolder}', '.debug', 'debug', '${workspaceRootFolderName}')
     },
     commands: [
-      'rustc -g ${file} -o ${fileNoExtension}'
+      // 'rustc -g ${file} -o ${fileNoExtension}'
+      'cargo build --target-dir "' + path.join('${workspaceFolder}', '.debug') + '"'
     ],
     extensions: [
       "vadimcn.vscode-lldb",
-      "matklad.rust-analyzer"
+      "rust-lang.rust-analyzer"
     ]
   },
   "shellscript": {

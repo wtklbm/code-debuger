@@ -83,3 +83,15 @@ export function clearSpinner(message: string = ''): void {
 export function reloadWindow() {
   vscode.commands.executeCommand('workbench.action.reloadWindow');
 }
+
+
+/**
+ * 获取配置
+ * @param section 
+ * @param key 
+ * @param defaultValue 
+ * @returns 
+ */
+export function getVSCodeSetting<T>(section: string, key: string, defaultValue?: T): T {
+  return vscode.workspace.getConfiguration(section).get<T>(key, defaultValue as T);
+}

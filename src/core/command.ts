@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { getProvider, getSuportLanguages } from "../configs";
-import { clearSpinner, EXEC_ERROR, getFileNoExtension, getWorkspaceFolder, isDir, isFile, registerCommand, showSpinner, tryExecCmdSync } from "../utils";
+import { clearSpinner, EXEC_ERROR, getFileNoExtension, getVSCodeSetting, getWorkspaceFolder, isDir, isFile, registerCommand, showSpinner, tryExecCmdSync, getFileDirname } from "../utils";
 import * as fs from 'fs-extra';
 import { Extension } from "./extension";
 import { localize } from "../i18n";
@@ -60,8 +60,11 @@ async function debugFile(uri: vscode.Uri) {
       return vscode.commands.executeCommand(provider.configuration.command);
     }
 
+    const fileDirectoryAsCwd = getVSCodeSetting('code-debuger', 'fileDirectoryAsCwd')
+    const cwd = fileDirectoryAsCwd ? getFileDirname(uri) : undefined
+
     // @ts-ignore
-    vscode.debug.startDebugging(undefined, provider.configuration);
+    vscode.debug.startDebugging(cwd, provider.configuration);
     vscode.debug.onDidTerminateDebugSession(e => {
       if (e.configuration.name === 'Rust') {
         fs.emptyDirSync(path.join(e.configuration.cwd, '.debug'))

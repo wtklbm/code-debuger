@@ -1,3 +1,7 @@
+### v0.1.4 2023-12-28
+
+- 增加以当前目录为工作目录选项.
+
 ### v0.1.3 2023-12-25
 
 - 修正rust-analyzer的扩展ID. 感谢[@yeluyang](https://gitee.com/yeluyang95)

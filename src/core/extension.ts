@@ -207,7 +207,8 @@ export class Extension {
    * 添加扩展到跳过列表
    * @param ids
    */
-  private async addToSkippedExtensions(ids: string[]): Promise<void> {
+  // @ts-ignore
+  private async _addToSkippedExtensions(ids: string[]): Promise<void> {
     if (!this.context) {
       return;
     }
@@ -293,7 +294,8 @@ export class Extension {
    * @param value 配置值
    * @param uri 文件URI
    */
-  private async setWorkspacePromptBehavior(value: string, uri?: vscode.Uri): Promise<void> {
+  // @ts-ignore
+  private async _setWorkspacePromptBehavior(value: string, uri?: vscode.Uri): Promise<void> {
     const workspaceConfig = vscode.workspace.getConfiguration('code-debuger', uri);
     await workspaceConfig.update('extensionPromptBehavior', value, vscode.ConfigurationTarget.WorkspaceFolder);
   }
@@ -332,7 +334,8 @@ export class Extension {
    * 添加扩展到已显示提示列表（全局）
    * @param ids
    */
-  private async addToPromptShownExtensions(ids: string[]): Promise<void> {
+  // @ts-ignore
+  private async _addToPromptShownExtensions(ids: string[]): Promise<void> {
     if (!this.context) {
       return;
     }

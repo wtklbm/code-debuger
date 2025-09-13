@@ -125,9 +125,9 @@ export async function getProvider(uri: vscode.Uri, ...args: any[]) {
   const base: Provider = {
     configuration: {
       request: 'launch',
-      program: uri.fsPath, 
-      cwd: '${workspaceFolder}', 
-      args, 
+      program: uri.fsPath,
+      cwd: '${workspaceFolder}',
+      args,
       smartStep: true,
       sourceMaps: true,
       stopOnEntry: false
@@ -135,14 +135,17 @@ export async function getProvider(uri: vscode.Uri, ...args: any[]) {
   };
 
   if (document.languageId === "typescript") {
-    let tsnodePath = findMoudlePath(uri.fsPath, 'ts-node')
-    if (tsnodePath) {
-      let configuration = Object.assign(base.configuration, provider.configuration, {runtimeArgs: ["-r", path.join(tsnodePath, 'register')]});
+    let tsxPath = findMoudlePath(uri.fsPath, 'tsx')
+    if (tsxPath) {
+      let configuration = Object.assign(base.configuration, provider.configuration, {
+        runtime: tsxPath,
+        runtimeArgs: ['--no-warnings']
+      });
       let result = Object.assign(base, provider, {configuration}) as Provider;
       result = replaceProvider(result, uri) as Provider;
       return result
     } else {
-      vscode.window.showErrorMessage(localize('error.no.ts-node'));
+      vscode.window.showErrorMessage(localize('error.no.tsx'));
     }
   } else {
     let configuration = Object.assign(base.configuration, provider.configuration);
@@ -157,6 +160,9 @@ export async function getProvider(uri: vscode.Uri, ...args: any[]) {
 export function getSuportLanguages() {
   return Object.keys(Providers);
 }
+
+// 导出 Providers 对象以便在其他模块中复用
+export { Providers };
 
 async function getDocument(uri: vscode.Uri) {
   const editors = vscode.window.visibleTextEditors;

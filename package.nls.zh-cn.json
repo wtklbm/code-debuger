@@ -9,7 +9,7 @@
   "toast.spinner.runing": "正在执行: {0}",
   "toast.spinner.installing.nodemodule": "安装: {0}",
   "error.command": "命令错误: \n{0}",
-  "error.no.ts-node": "调试 typescript 需要 ts-node",
+  "error.no.tsx": "调试 typescript 需要 tsx",
   "error.extract.extension-1": "无法解压缩扩展: {0}。{1}",
   "error.extract.extension-2": "无法解压缩扩展: {0}。访问系统临时目录时被拒绝，请检查您的用户权限",
   "error.extract.extension-3": "无法解压缩扩展: {0}。未找到安装扩展所需的压缩文件",
@@ -17,5 +17,16 @@
   "error.env.platform.not.supported": "暂时还不支持您的操作系统",
   "error.env.unknown.vscode": "无法识别当前 VSCode 版本",
 
-  "config.fileDirectoryAsCwd": "以当前目录为工作目录"
+  "config.fileDirectoryAsCwd": "以当前目录为工作目录",
+  "config.extensionPromptBehavior": "控制扩展安装提示的显示频率",
+  "config.extensionPromptBehavior.never": "从不显示扩展安装提示",
+  "config.extensionPromptBehavior.once": "每个扩展在每个项目中只显示一次安装提示",
+  "config.extensionPromptBehavior.always": "每次打开不受支持的文件时都显示扩展安装提示",
+  "config.skippedExtensions": "永不显示安装提示的扩展列表（会覆盖 extensionPromptBehavior 设置）",
+  "config.promptShownExtensions": "在此项目中已经显示过安装提示的扩展列表（当 extensionPromptBehavior 为 'once' 时使用）",
+  "toast.settings.missing.extensions": "调试需要以下扩展: {0}。是否要立即安装？",
+  "toast.settings.install.extensions": "安装",
+  "toast.settings.skip.extensions": "跳过",
+  "toast.settings.cancel.extensions": "取消",
+  "error.command.extensions": "启动 {0} 调试失败。请确保您已安装调试此类文件所需的扩展。"
 }

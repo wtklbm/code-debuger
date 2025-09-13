@@ -28,8 +28,17 @@ async function debugFile(uri: vscode.Uri) {
 
     // 扩展
     if (provider.extensions) {
-      const hasUninstalled = await Extension.instance.checkToInstall(provider.extensions);
-      if (hasUninstalled) {
+      const installResult = await Extension.instance.checkToInstall(provider.extensions, uri);
+      // 如果用户点击了取消（installResult 为 null），或者有扩展被安装（installResult 为 true），则不再继续执行
+      if (installResult === true || installResult === null) {
+        return;
+      }
+      // 如果用户点击了跳过（installResult 为 false），则显示执行失败的提示
+      if (installResult === false) {
+        // 使用 provider?.configuration.name 作为提示
+        const languageId = (await vscode.workspace.openTextDocument(uri)).languageId;
+        const firstCmd = provider?.configuration.name || languageId;
+        vscode.window.showErrorMessage(localize('error.command.extensions', firstCmd));
         return;
       }
     }
@@ -40,7 +49,7 @@ async function debugFile(uri: vscode.Uri) {
       if (workspace) {
         process.chdir(workspace);
       }
-      
+
       for (const key in provider.commands) {
         let cmd = provider.commands[key];
         showSpinner(localize('toast.spinner.runing', cmd));
@@ -48,7 +57,7 @@ async function debugFile(uri: vscode.Uri) {
         // 执行命令报错
         if (tryExecCmdSync(cmd) === EXEC_ERROR) {
           clearSpinner();
-          vscode.window.showErrorMessage(localize('error.command', cmd));
+          vscode.window.showErrorMessage(localize('error.command.extensions', provider?.configuration.name || cmd));
           return;
         }
       }

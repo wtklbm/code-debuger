@@ -67,6 +67,40 @@
           "default": false,
           "description": "%config.fileDirectoryAsCwd%",
           "scope": "resource"
+        },
+        "code-debuger.extensionPromptBehavior": {
+          "type": "string",
+          "default": "once",
+          "enum": [
+            "never",
+            "once",
+            "always"
+          ],
+          "enumDescriptions": [
+            "%config.extensionPromptBehavior.never%",
+            "%config.extensionPromptBehavior.once%",
+            "%config.extensionPromptBehavior.always%"
+          ],
+          "description": "%config.extensionPromptBehavior%",
+          "scope": "resource"
+        },
+        "code-debuger.skippedExtensions": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "%config.skippedExtensions%",
+          "scope": "resource"
+        },
+        "code-debuger.promptShownExtensions": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "%config.promptShownExtensions%",
+          "scope": "resource"
         }
       }
     },

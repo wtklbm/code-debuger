@@ -31,7 +31,7 @@ class ActiveTextEditorListener {
     let doc = editor.document;
     let provider = await getProvider(doc.uri);
     if (provider && provider.extensions) {
-      await Extension.instance.checkToInstall(provider.extensions);
+      await Extension.instance.checkToInstall(provider.extensions, doc.uri);
     }
   }
 }

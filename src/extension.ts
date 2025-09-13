@@ -7,6 +7,10 @@ export async function activate(context: vscode.ExtensionContext) {
   // 设置 i18n
   setup(context.extensionPath);
 
+  // 初始化扩展管理器
+  const { Extension } = await import('./core/extension');
+  Extension.init(context);
+
   // 注册命令
   initCommand(context);
 

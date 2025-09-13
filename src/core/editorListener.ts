@@ -9,12 +9,10 @@ class ActiveTextEditorListener {
   constructor() {
     // 首次立即检查
     if (vscode.window.activeTextEditor) {
-      console.log(`Active doc languageId: ${vscode.window.activeTextEditor?.document.languageId}`);
       this.onChange(vscode.window.activeTextEditor);
     }
 
     this.disposer = vscode.window.onDidChangeActiveTextEditor(editor => {
-      console.log(`Active doc languageId: ${editor?.document.languageId}`);
       this.onChange(editor);
     });
   }

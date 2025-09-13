@@ -1,12 +1,12 @@
 {
-  "name": "code-debuger",
-  "displayName": "Code Debugger",
+  "name": "code-debuger-fork",
+  "displayName": "Code Debugger (Fork)",
   "description": "%description%",
   "version": "1.0.0",
   "publisher": "wtklbm",
   "main": "./dist/extension.js",
   "scripts": {
-    "build": "vsce package",
+    "build": "yes | vsce package --allow-star-activation",
     "vscode:prepublish": "npm run compile",
     "compile": "npm run clear && tsc -p ./",
     "clear": "remove-all dist",
@@ -59,7 +59,7 @@
   ],
   "contributes": {
     "configuration": {
-      "title": "Code Debugger",
+      "title": "Code Debugger (Fork)",
       "type": "object",
       "properties": {
         "code-debuger.fileDirectoryAsCwd": {

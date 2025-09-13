@@ -3,7 +3,7 @@
   "displayName": "Code Debugger",
   "description": "%description%",
   "version": "1.0.0",
-  "publisher": "wowbox",
+  "publisher": "wtklbm",
   "main": "./dist/extension.js",
   "scripts": {
     "build": "vsce package",

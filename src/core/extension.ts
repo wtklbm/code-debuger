@@ -89,18 +89,36 @@ export class Extension {
       }
     }
 
+    // 所有扩展都已安装，返回 false（表示不需要安装任何扩展）
     return false;
   }
 
   private getUninstalled(ids: string[]): string[] {
     let result: string[] = [];
     let exts = this.getAll();
-    // @ts-ignore
-    result = ids.map(id => {
-      if (!exts.find(ext => id.toLowerCase() === ext.toLowerCase())) {
+
+    // 更精确的扩展 ID 匹配
+    const tempResult = ids.map(id => {
+      const normalizedId = id.toLowerCase();
+
+      const isInstalled = exts.some(ext => {
+        const normalizedExtId = ext.toLowerCase();
+        // 完全匹配或 publisher.extension 匹配
+        const isMatch = normalizedExtId === normalizedId ||
+                       normalizedExtId.endsWith('.' + normalizedId);
+
+        return isMatch;
+      });
+
+      if (!isInstalled) {
         return id;
+      } else {
+        return undefined;
       }
-    }).filter(item => !!item)
+    });
+
+    // 过滤掉 undefined 值
+    result = tempResult.filter((item): item is string => item !== undefined);
 
     return result;
   }
@@ -379,4 +397,5 @@ export class Extension {
     await this.context.globalState.update(Extension.PROMPT_SHOWN_KEY, []);
   }
 }
+
 

@@ -2,19 +2,19 @@ import * as vscode from "vscode";
 import { getProvider, getSuportLanguages } from "../configs";
 import {
   clearSpinner,
-  EXEC_ERROR,
   getFileNoExtension,
   getWorkspaceFolder,
   isDir,
   isFile,
   registerCommand,
   showSpinner,
-  tryExecCmdSync,
 } from "../utils";
+import { getExecOptions } from "../utils/node";
 import * as fs from "fs-extra";
 import { Extension } from "./extension";
 import { localize } from "../i18n";
 import * as path from "path";
+import { execSync } from "child_process";
 
 export function initCommand(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand(
@@ -71,15 +71,19 @@ async function debugFile(uri: vscode.Uri) {
         let cmd = provider.commands[key];
         showSpinner(localize("toast.spinner.runing", cmd));
 
-        // 执行命令报错
-        if (tryExecCmdSync(cmd) === EXEC_ERROR) {
+        try {
+          // 手动执行命令
+          const options = getExecOptions();
+          execSync(cmd, options);
+        } catch (error: any) {
           clearSpinner();
+          // 打印完整的错误消息
+          const errorMessage = error?.stderr?.toString() || error?.stdout?.toString() || error?.message || error?.toString() || "Unknown error";
+
           vscode.window.showErrorMessage(
-            localize(
-              "error.command.extensions",
-              provider?.configuration.name || cmd
-            )
+            provider?.configuration.name + `编译失败: '\n${errorMessage}`
           );
+
           return;
         }
       }
@@ -133,3 +137,4 @@ function clearLLDB(uri: vscode.Uri) {
     fs.removeSync(outdir);
   }
 }
+

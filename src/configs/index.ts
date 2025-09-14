@@ -134,7 +134,7 @@ export async function getProvider(uri: vscode.Uri, ...args: any[]) {
     }
   };
 
-  if (document.languageId === "typescript") {
+  if (document.languageId === "typescript" || document.languageId === "javascript") {
     let tsxPath = findMoudlePath(uri.fsPath, 'tsx')
     if (tsxPath) {
       let configuration = Object.assign(base.configuration, provider.configuration, {

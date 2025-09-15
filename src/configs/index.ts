@@ -1,163 +1,177 @@
-import { findMoudlePath, getReplacedString, isFile, isPlainObject } from "../utils";
-import * as path from 'path';
+import {
+  findModulePath,
+  getReplacedString,
+  isFile,
+  isPlainObject,
+} from "../utils";
 import * as vscode from "vscode";
 import { AnyObject, Provider } from "../types";
 import { localize } from "../i18n";
 
 const Providers: Record<string, Provider> = {
-  "javascript": {
+  javascript: {
     configuration: {
-      name: 'Node',
-      type: 'node',
-    }
+      name: "Node",
+      type: "node",
+      args: ["--no-warnings"],
+      skipFiles: ["<node_internals>/**", "${workspaceFolder}/node_modules/**"],
+    },
   },
-  "typescript": {
+  typescript: {
     configuration: {
       name: "Typescript",
       type: "node",
-    }
-  },
-  "python": {
-    configuration: {
-      name: 'Python',
-      type: 'python',
+      args: ["--no-warnings"],
+      skipFiles: ["<node_internals>/**", "${workspaceFolder}/node_modules/**"],
     },
-    extensions: [
-      "ms-python.python"
-    ]
   },
-  "go": {
+  python: {
     configuration: {
-      name: 'Golang',
-      type: 'go',
+      name: "Python",
+      type: "python",
     },
-    extensions: [
-      "golang.go"
-    ]
+    extensions: ["ms-python.python"],
   },
-  "dart": {
+  go: {
     configuration: {
-      name: 'Dart',
-      type: 'dart',
+      name: "Golang",
+      type: "go",
     },
-    extensions: [
-      "dart-code.dart-code"
-    ]
+    extensions: ["golang.go"],
   },
-  "coffeescript": {
+  dart: {
     configuration: {
-      name: 'Coffee',
-      type: 'node',
-    }
-  },
-  "c": {
-    configuration: {
-      name: 'Clang',
-      type: 'lldb',
-      program: '${fileNoExtension}',
+      name: "Dart",
+      type: "dart",
     },
-    commands: [
-      'gcc -g ${file} -o ${fileNoExtension}'
-    ],
-    extensions: [
-      "vadimcn.vscode-lldb"
-    ]
+    extensions: ["dart-code.dart-code"],
   },
-  "cpp": {
+  coffeescript: {
     configuration: {
-      name: 'C++',
-      type: 'lldb',
-      program: '${fileNoExtension}',
+      name: "Coffee",
+      type: "node",
     },
-    commands: [
-      'gcc -g ${file} -o ${fileNoExtension} -lstdc++'
-    ],
-    extensions: [
-      "vadimcn.vscode-lldb"
-    ]
   },
-  "rust": {
+  c: {
+    configuration: {
+      name: "Clang",
+      type: "lldb",
+      program: "${fileNoExtension}",
+    },
+    commands: ['gcc -g "${file}" -o "${fileNoExtension}"'],
+    extensions: ["vadimcn.vscode-lldb"],
+  },
+  cpp: {
+    configuration: {
+      name: "C++",
+      type: "lldb",
+      program: "${fileNoExtension}",
+    },
+    commands: ['gcc -g "${file}" -o "${fileNoExtension}" -lstdc++'],
+    extensions: ["vadimcn.vscode-lldb"],
+  },
+  // NOTE 这里仅调试单文件，如需使用完整调试功能，则使用 `rust-analyzer`
+  rust: {
     configuration: {
       name: "Rust",
       type: "lldb",
-      program: path.join('${workspaceFolder}', '.debug', 'debug', '${workspaceRootFolderName}')
+      program: "${workspaceFolder}/target/debug/${fileBasenameNoExtension}",
+      env: {
+        RUST_BACKTRACE: "full",
+        RUST_LOG: "trace",
+      },
+      sourceLanguages: ["rust"],
     },
     commands: [
-      // 'rustc -g ${file} -o ${fileNoExtension}'
-      'cargo build --target-dir "' + path.join('${workspaceFolder}', '.debug') + '"'
+      // 先创建编译目录
+      "node -e \"require('fs').mkdirSync('${workspaceFolder}/target/debug', { recursive: true })\"",
+      // 再编译到目录
+      'rustc -g "${file}" -o "${workspaceFolder}/target/debug/${fileBasenameNoExtension}"',
     ],
-    extensions: [
-      "vadimcn.vscode-lldb",
-      "rust-lang.rust-analyzer"
-    ]
+    extensions: ["vadimcn.vscode-lldb", "rust-lang.rust-analyzer"],
   },
-  "shellscript": {
+  shellscript: {
     configuration: {
       name: "Bash",
       type: "bashdb",
+      // https://github.com/rogalmic/vscode-bash-debug/issues/112
+      //terminalKind: "integrated",
     },
-    extensions: [
-      "rogalmic.bash-debug"
-    ]
+    extensions: ["rogalmic.bash-debug"],
   },
-  "lua": {
+  lua: {
     configuration: {
       name: "Lua",
       type: "lrdb",
     },
-    extensions: [
-      "satoren.lrdb"
-    ]
-  }
-}
+    extensions: ["satoren.lrdb"],
+  },
+};
 
-export async function getProvider(uri: vscode.Uri, ...args: any[]) {
+export async function getProvider(uri: vscode.Uri, ...args: string[]) {
   if (!isFile(uri.fsPath)) return;
 
-  let document = await getDocument(uri);
+  const document = await getDocument(uri);
+  const provider = Providers[document.languageId];
 
-  // @ts-ignore
-  let provider = Providers[document.languageId];
   if (!provider) {
     return;
   }
 
-  const base: Provider = {
-    configuration: {
-      request: 'launch',
-      program: uri.fsPath,
-      cwd: '${workspaceFolder}',
-      args,
-      smartStep: true,
-      sourceMaps: true,
-      stopOnEntry: false
-    }
-  };
+  const mergeConfig = (
+    extra: Partial<Provider["configuration"]> = {}
+  ): Provider["configuration"] => ({
+    request: "launch",
+    program: uri.fsPath,
+    cwd: "${workspaceFolder}",
+    console: "internalConsole",
+    smartStep: true,
+    sourceMaps: true,
+    stopOnEntry: false,
+    ...provider.configuration,
+    ...extra,
+    env: { ...provider.configuration.env, ...extra.env },
+    args: [
+      ...(provider.configuration.args ?? []),
+      ...(extra.args ?? []),
+      ...args,
+    ],
+  });
 
-  if (document.languageId === "typescript" || document.languageId === "javascript") {
-    let tsxPath = findMoudlePath(uri.fsPath, 'tsx')
-    if (tsxPath) {
-      let configuration = Object.assign(base.configuration, provider.configuration, {
-        runtime: tsxPath,
-        runtimeArgs: ['--no-warnings']
-      });
-      let result = Object.assign(base, provider, {configuration}) as Provider;
-      result = replaceProvider(result, uri) as Provider;
-      return result
-    } else {
-      vscode.window.showErrorMessage(localize('error.no.tsx'));
+  const buildProvider = (configuration: Provider["configuration"]): Provider =>
+    replaceProvider({ ...provider, configuration }, uri) as Provider;
+
+  // ts/js 特殊处理
+  if (["typescript", "javascript"].includes(document.languageId)) {
+    const tsxAvailable = !!findModulePath(uri.fsPath, "tsx");
+
+    if (tsxAvailable) {
+      return buildProvider(
+        mergeConfig({ runtimeExecutable: "tsx", program: uri.fsPath })
+      );
     }
-  } else {
-    let configuration = Object.assign(base.configuration, provider.configuration);
-    let result = Object.assign(base, provider, {configuration}) as Provider;
-    result = replaceProvider(result, uri) as Provider;
-    return result;
+
+    // 没有 tsx，尝试 js fallback
+    vscode.window.showErrorMessage(localize("error.no.tsx"));
+
+    try {
+      const jsFilePath = uri.fsPath.replace(/\.ts$/, ".js");
+      const jsFileUri = vscode.Uri.file(jsFilePath);
+
+      await vscode.workspace.fs.stat(jsFileUri);
+
+      return buildProvider(mergeConfig({ program: jsFilePath }));
+    } catch {
+      vscode.window.showErrorMessage(localize("error.compile.error"));
+      return null;
+    }
   }
 
-  return;
+  // 其他语言
+  return buildProvider(mergeConfig());
 }
 
-export function getSuportLanguages() {
+export function getSupportLanguages() {
   return Object.keys(Providers);
 }
 
@@ -181,8 +195,8 @@ function replaceProvider(provider: AnyObject | Array<any>, uri: vscode.Uri) {
   for (const key in provider) {
     // @ts-ignore
     let value = provider[key];
-    if (typeof value === 'string') {
-      if (value.indexOf('${') !== -1) {
+    if (typeof value === "string") {
+      if (value.indexOf("${") !== -1) {
         // @ts-ignore
         provider[key] = getReplacedString(value, uri);
       }

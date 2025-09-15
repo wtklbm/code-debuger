@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
-import * as readPkgUp from 'read-pkg-up';
-import * as path from 'path';
+import * as readPkgUp from "read-pkg-up";
+import * as path from "path";
 import * as fs from "fs-extra";
 import { clearSpinner, showSpinner } from "./api";
 import { localize } from "../i18n";
@@ -11,17 +11,18 @@ export const EXEC_ERROR = "@@ERROR@@";
  * 获取执行命令的选项，在 macOS 和 Linux 上使用当前 shell
  */
 export function getExecOptions(): any {
-  if (process.platform === 'darwin' || process.platform === 'linux') {
-    let shell = execSync('echo $SHELL').toString();
-    shell = String(shell).replace(/\n/, '');
+  if (process.platform === "darwin" || process.platform === "linux") {
+    let shell = execSync("echo $SHELL").toString();
+    shell = String(shell).replace(/\n/, "");
     return { shell };
   }
   return undefined;
 }
 
-export function findMoudlePath(fspath: string, mod: string) {
+export function findModulePath(fspath: string, mod: string) {
   const root = getNpmGlobalRoot();
   let modPath;
+
   if (fs.existsSync(path.join(root, mod))) {
     modPath = path.join(root, mod);
   } else {
@@ -32,9 +33,10 @@ export function findMoudlePath(fspath: string, mod: string) {
     return modPath;
   }
 
-  showSpinner(localize('toast.spinner.installing.nodemodule', mod));
+  showSpinner(localize("toast.spinner.installing.nodemodule", mod));
   tryExecCmdSync(`npm i -g ${mod}`);
   clearSpinner();
+
   if (fs.existsSync(path.join(root, mod))) {
     return path.join(root, mod);
   }
@@ -46,29 +48,36 @@ export function findMoudlePath(fspath: string, mod: string) {
  * 获取全局的node_modules路径
  */
 function getNpmGlobalRoot() {
-  return tryExecCmdSync('npm root -g', '').trim();
+  return tryExecCmdSync("npm root -g", "").trim();
 }
 
-export function tryExecCmdSync(cmd: string, fallback: string = EXEC_ERROR): string {
+export function tryExecCmdSync(
+  cmd: string,
+  fallback: string = EXEC_ERROR
+): string {
   try {
     const options = getExecOptions();
-    return execSync(cmd, options).toString()
+    return execSync(cmd, options).toString();
   } catch (e) {
-    return fallback
+    return fallback;
   }
 }
 
 function findPkg(fspath: string, pkgName: string): string | undefined {
-  const res = readPkgUp.sync({cwd: fspath, normalize: false});
-  const {root} = path.parse(fspath);
-  if (res && res.packageJson &&
+  const res = readPkgUp.sync({ cwd: fspath, normalize: false });
+  const { root } = path.parse(fspath);
+  if (
+    res &&
+    res.packageJson &&
     ((res.packageJson.dependencies && res.packageJson.dependencies[pkgName]) ||
-    (res.packageJson.devDependencies && res.packageJson.devDependencies[pkgName]) ||
-    (fs.existsSync(path.join(path.dirname(res.path), 'node_modules', pkgName))))) {
+      (res.packageJson.devDependencies &&
+        res.packageJson.devDependencies[pkgName]) ||
+      fs.existsSync(path.join(path.dirname(res.path), "node_modules", pkgName)))
+  ) {
     // return resolve.sync(pkgName, {basedir: res.path});
-    return path.join(path.dirname(res.path), 'node_modules', pkgName);
+    return path.join(path.dirname(res.path), "node_modules", pkgName);
   } else if (res && res.path) {
-    const parent = path.resolve(path.dirname(res.path), '..');
+    const parent = path.resolve(path.dirname(res.path), "..");
     if (parent !== root) {
       return findPkg(parent, pkgName);
     }

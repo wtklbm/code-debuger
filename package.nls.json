@@ -10,6 +10,7 @@
   "toast.spinner.runing": "runing: {0}",
   "error.command": "command error: \n{0}",
   "error.no.tsx": "debug typescript need tsx",
+  "error.compile.error": "Compiled JavaScript file not found. Please compile your file first.",
   "error.extract.extension-1": "Cannot extract extension: {0}. {1}",
   "error.extract.extension-2": "Cannot extract extension: {0}. Access temporary directory denied.",
   "error.extract.extension-3": "Cannot extract extension: {0}. Extension zip file not found.",

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getProvider, getSuportLanguages } from "../configs";
+import { getProvider, getSupportLanguages } from "../configs";
 import {
   clearSpinner,
   getFileNoExtension,
@@ -20,7 +20,7 @@ export function initCommand(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand(
     "setContext",
     "code-debuger:languages",
-    getSuportLanguages()
+    getSupportLanguages()
   );
 
   registerCommand(context, "code-debuger.debugFile", debugFile);

@@ -1,6 +1,6 @@
 {
-  "description": "Debug JS, TS, Python, Go, Dart, C/CPP, Rust, CoffeeScript, Lua",
-  "debug file": "Debug File",
+  "description": "调试 JS, TS, Python, Go, Dart, C/CPP, Rust, CoffeeScript, Lua",
+  "debug file": "调试文件",
   "toast.box.reload": "重新加载窗口",
   "toast.box.reload.message": "扩展已安装成功，请重新加载。",
   "toast.box.enable.extension": "请在扩展中启用以下扩展: {0}。然后重新加载窗口",
@@ -10,6 +10,7 @@
   "toast.spinner.installing.nodemodule": "安装: {0}",
   "error.command": "命令错误: \n{0}",
   "error.no.tsx": "调试 typescript 需要 tsx",
+  "error.compile.error": "未找到编译后的 JavaScript 文件。请先编译您的文件",
   "error.extract.extension-1": "无法解压缩扩展: {0}。{1}",
   "error.extract.extension-2": "无法解压缩扩展: {0}。访问系统临时目录时被拒绝，请检查您的用户权限",
   "error.extract.extension-3": "无法解压缩扩展: {0}。未找到安装扩展所需的压缩文件",

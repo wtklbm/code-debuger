@@ -2,10 +2,11 @@
   "name": "code-debuger-fork",
   "displayName": "Code Debugger (Fork)",
   "description": "%description%",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "wtklbm",
   "main": "./dist/extension.js",
   "scripts": {
+    "package": "npm run compile && npm run build",
     "build": "yes | vsce package --allow-star-activation",
     "vscode:prepublish": "npm run compile",
     "compile": "npm run clear && tsc -p ./",
@@ -114,12 +115,14 @@
         }
       }
     ],
-    "keybindings": [{
-      "command": "code-debuger.debugFile",
-      "key": "ctrl+5",
-      "mac": "cmd+5",
-      "when": "resourceLangId in code-debuger:languages"
-    }],
+    "keybindings": [
+      {
+        "command": "code-debuger.debugFile",
+        "key": "ctrl+5",
+        "mac": "cmd+5",
+        "when": "resourceLangId in code-debuger:languages"
+      }
+    ],
     "menus": {
       "editor/title": [
         {

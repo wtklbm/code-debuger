@@ -8,13 +8,20 @@ import * as vscode from "vscode";
 import { AnyObject, Provider } from "../types";
 import { localize } from "../i18n";
 
+const jsSkipFiles = [
+  "<node_internals>/**",
+
+  // 默认情况下忽略 `node_modules`，这样用户就不能调试外部依赖了
+  "${workspaceFolder}/node_modules/**",
+];
+
 const Providers: Record<string, Provider> = {
   javascript: {
     configuration: {
       name: "Node",
       type: "node",
       args: ["--no-warnings"],
-      skipFiles: ["<node_internals>/**", "${workspaceFolder}/node_modules/**"],
+      skipFiles: jsSkipFiles,
     },
   },
   typescript: {
@@ -22,7 +29,7 @@ const Providers: Record<string, Provider> = {
       name: "Typescript",
       type: "node",
       args: ["--no-warnings"],
-      skipFiles: ["<node_internals>/**", "${workspaceFolder}/node_modules/**"],
+      skipFiles: jsSkipFiles,
     },
   },
   python: {
@@ -108,7 +115,7 @@ const Providers: Record<string, Provider> = {
   },
 };
 
-export async function getProvider(uri: vscode.Uri, ...args: string[]) {
+export async function getProvider(uri: vscode.Uri) {
   if (!isFile(uri.fsPath)) return;
 
   const document = await getDocument(uri);
@@ -117,6 +124,12 @@ export async function getProvider(uri: vscode.Uri, ...args: string[]) {
   if (!provider) {
     return;
   }
+
+  // 获取用户配置的 skipFiles、env 和 args
+  const config = vscode.workspace.getConfiguration("code-debuger");
+  const userSkipFiles = config.get<string[]>("launch.skipFiles", []);
+  const userEnv = config.get<Record<string, string>>("launch.env", {});
+  const userArgs = config.get<string[]>("launch.args", []);
 
   const mergeConfig = (
     extra: Partial<Provider["configuration"]> = {}
@@ -130,11 +143,15 @@ export async function getProvider(uri: vscode.Uri, ...args: string[]) {
     stopOnEntry: false,
     ...provider.configuration,
     ...extra,
-    env: { ...provider.configuration.env, ...extra.env },
-    args: [
-      ...(provider.configuration.args ?? []),
-      ...(extra.args ?? []),
-      ...args,
+    // 如果用户传递了，则优先使用用户的，否则使用默认的
+    env: {
+      ...extra.env,
+      ...(userEnv ?? provider.configuration.env),
+    },
+    args: [...(extra.args ?? []), ...(userArgs ?? provider.configuration.args)],
+    skipFiles: [
+      ...(extra.skipFiles ?? []),
+      ...(userSkipFiles ?? provider.configuration.skipFiles),
     ],
   });
 

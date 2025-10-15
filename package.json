@@ -2,7 +2,7 @@
   "name": "code-debuger-fork",
   "displayName": "Code Debugger (Fork)",
   "description": "%description%",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "wtklbm",
   "main": "./dist/extension.js",
   "scripts": {
@@ -101,6 +101,35 @@
             "type": "string"
           },
           "description": "%config.promptShownExtensions%",
+          "scope": "resource"
+        },
+        "code-debuger.launch.skipFiles": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "%config.launch.skipFiles%",
+          "scope": "resource"
+        },
+        "code-debuger.launch.env": {
+          "type": "object",
+          "default": {},
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "description": "%config.launch.env%",
+          "scope": "resource"
+        },
+        "code-debuger.launch.args": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "%config.launch.args%",
           "scope": "resource"
         }
       }
